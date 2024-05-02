@@ -1,0 +1,23 @@
+#!/bin/bash
+# RNA_salmon.sh
+#SBATCH --job-name=salmon # Job name
+#SBATCH --mail-type=END,FAIL # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=shuai.wang@nyulangone.org # Where to send mail
+#SBATCH --ntasks=20
+#SBATCH --mem=128gb # Job memory request
+#SBATCH --time=15:00:00 # Time limit hrs:min:sec
+#SBATCH --output=/gpfs/scratch/wangs40/ # Standard output and error log
+#SBATCH -p cpu_short
+#SBATCH --output=slurm_%j.out
+module load salmon
+cd /gpfs/data/sequence/results/placantonakislab/2024-04-23/fastq/
+for fn in *_R1_001.fastq.gz;
+do
+        samp=${fn%_R1_001.fastq.gz}
+        echo "Processing sample ${samp}"
+        salmon quant -i /gpfs/scratch/wangs40/RNASeq_pipeline/salmon_index -l A -1 ${samp}_R1_001.fastq.gz -2 ${samp}_R2_001.fastq.gz -p 28 --validateMappings -o /gpfs/scratch/wangs40/RNASeq_pipeline/salmon_results/quants/${samp}_quant
+done
+##reference: https://hbctraining.github.io/Intro-to-rnaseq-hpc-gt/lessons/04_loops_and_scripts.html
+###reference: https://hbctraining.github.io/Intro-to-rnaseq-hpc-salmon/lessons/04_quasi_alignment_salmon.html
+###rederence:https://combine-lab.github.io/salmon/getting_started/
+~                                                                  
